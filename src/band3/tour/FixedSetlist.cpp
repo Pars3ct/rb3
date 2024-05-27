@@ -55,20 +55,25 @@ int FixedSetlist::GetNumSongs() const {
     return m_pSongEntries->Size() - 1;
 }
 
-void FixedSetlist::InqSongs(std::vector<Symbol>& songs) const {
+void FixedSetlist::InqSongs(std::vector<Symbol>& o_rSongs) const {
     MILO_ASSERT(o_rSongs.empty(), 0x56);
 
     for (int i = 0; i < m_pSongEntries->Size(); i++) {
-        Symbol test;
-
+        Symbol var1 = gNullStr;
         DataNode node = m_pSongEntries->Node(i);
-        
 
-        DataArray* pArray;
+        if (mWeight) {
 
-        MILO_ASSERT(pArray->Size() == 1, 0x0);
-        // pArray = TheAccomplishmentMgr.GetTourSafeDiscSongAtDifficultyIndex(0);
-        Symbol s = pArray->Sym(0);
-        pArray->Array(0);
+        } else if (mWeight) {
+            DataArray* pArray = node.Array(0);
+            MILO_ASSERT(pArray->Size() == 1, 99);
+            DataNode node2 = pArray->Node(0);
+            int i2 = node2.Int(pArray);
+            // TheAccomplishmentMgr.GetTourSafeDiscSongAtDifficultyIndex(i2);
+        } else {
+            MILO_ASSERT(false, 0x6b);
+        }
+
+        o_rSongs.push_back(var1);
     }
 }
