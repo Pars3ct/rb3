@@ -2,7 +2,7 @@
 #include "os/Debug.h"
 #include "system/utl/Symbols.h"
 #include <vector>
-// #include "band3/meta_band/AccomplishmentManager.h"
+#include "band3/meta_band/AccomplishmentManager.h"
 
 FixedSetlist::FixedSetlist() : mWeight(1), m_pSongEntries(NULL), mName("") {
 }
@@ -55,25 +55,26 @@ int FixedSetlist::GetNumSongs() const {
     return m_pSongEntries->Size() - 1;
 }
 
-void FixedSetlist::InqSongs(std::vector<Symbol>& o_rSongs) const {
+bool FixedSetlist::InqSongs(std::vector<Symbol>& o_rSongs) const {
     MILO_ASSERT(o_rSongs.empty(), 0x56);
 
-    for (int i = 0; i < m_pSongEntries->Size(); i++) {
-        Symbol var1 = gNullStr;
-        DataNode node = m_pSongEntries->Node(i);
-
-        if (mWeight) {
-
-        } else if (mWeight) {
-            DataArray* pArray = node.Array(0);
-            MILO_ASSERT(pArray->Size() == 1, 99);
-            DataNode node2 = pArray->Node(0);
-            int i2 = node2.Int(pArray);
-            // TheAccomplishmentMgr.GetTourSafeDiscSongAtDifficultyIndex(i2);
+    for (int i = 1; i < m_pSongEntries->Size(); i++) {
+        Symbol song = gNullStr;
+        DataNode& songEntryNode = m_pSongEntries->Node(i);
+        if (songEntryNode.Type() == kDataSymbol) {
+            song = songEntryNode.Sym(0);
+        } else if (songEntryNode.Type() == kDataArray) {
+            DataArray* pArray = songEntryNode.Array(0);
+            MILO_ASSERT(pArray->Size() == 1, 0x63);
+            DataNode& indexNode = pArray->Node(0);
+            int difficultyIndex = indexNode.Int(pArray);
+            song = TheAccomplishmentMgr->GetTourSafeDiscSongAtDifficultyIndex(difficultyIndex);
         } else {
             MILO_ASSERT(false, 0x6b);
         }
 
-        o_rSongs.push_back(var1);
+        o_rSongs.push_back(song);
     }
+
+    return !o_rSongs.empty();
 }

@@ -4,9 +4,9 @@
 #include "system/obj/Data.h"
 #include <map>
 #include <utility>
-#include "AccomplishmentCategory.cpp"
-#include "Accomplishment.h"
 
+class Accomplishment;
+class AccomplishmentCategory;
 class Award;
 
 class AccomplishmentManager {
@@ -35,9 +35,9 @@ public:
     AccomplishmentManager();
     virtual ~AccomplishmentManager();
 
-    DataArray* GetTourSafeDiscSongAtDifficultyIndex(int index);
+    Symbol GetTourSafeDiscSongAtDifficultyIndex(int index);
     void AddAssetAward(Symbol, Symbol);
 };
 
-static AccomplishmentManager TheAccomplishmentMgr;
+static AccomplishmentManager* TheAccomplishmentMgr;
 #endif // METABAND_ACCOMPLISHMENTMANAGER_H

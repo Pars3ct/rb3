@@ -20,7 +20,7 @@ private:
     int unk_0x10, unk_0x14;
     u8 unk_0x18, unk_0x19;
     int unk_0x1C, unk_0x20;
-    String unk_0x24;
+    class String unk_0x24;
     int unk_0x30;
     GameplayOptions unk_0x34;
     u8 unk_0x70;
