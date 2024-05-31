@@ -12,26 +12,33 @@ class CacheMgr {
 private:
     enum OpType {};
 
-    class CacheIDStoreEntry {};
+    struct CacheIDStoreEntry {
+        Symbol symbol;
+        CacheID* id;
+    };
 
-    std::vector<CacheMgr::CacheIDStoreEntry> mStoreEntries;
 public:
     CacheMgr();
     virtual ~CacheMgr();
-    void SearchAsync(const char*, CacheID**);
-    void ShowUserSelectUIAsync(LocalUser*, unsigned long long, const char*, const char*, CacheID**);
-    void CreateCacheIDFromDeviceID(unsigned int, const char*, const char*, CacheID**);
-    void CreateCacheID(const char*, const char*, const char*, const char*, const char*, int, CacheID**);
+    virtual bool SearchAsync(const char*, CacheID**);
+    bool ShowUserSelectUIAsync(LocalUser*, unsigned long long, const char*, const char*, CacheID**);
+    bool CreateCacheIDFromDeviceID(unsigned int, const char*, const char*, CacheID**);
+    virtual bool CreateCacheID(const char*, const char*, const char*, const char*, const char*, int, CacheID**);
     bool IsDone();
-    void GetLastResult();
+    CacheResult GetLastResult();
     void AddCacheID(CacheID*, Symbol);
     void RemoveCacheID(CacheID*);
-    void GetCacheID(Symbol);
+    CacheID* GetCacheID(Symbol);
     void SetOp(CacheMgr::OpType);
-    void GetOp();
-    void SetLastResult();
+    CacheMgr::OpType GetOp();
+    void SetLastResult(CacheResult);
+private:
+    std::vector<CacheMgr::CacheIDStoreEntry> mCacheIDStore;
+    CacheMgr::OpType mOp; // 0x0c
+    CacheResult mLastResult;      // 0x10
+    int mUnk; // 0x1c
 };
 
-static CacheMgr TheCacheMgr;
+static CacheMgr* TheCacheMgr;
 
 #endif // UTL_CACHEMGR_H

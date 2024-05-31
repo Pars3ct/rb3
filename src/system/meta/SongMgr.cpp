@@ -1,5 +1,6 @@
 #include "SongMgr.h"
 #include "system/os/ContentMgr.h"
+#include "system/utl/CacheMgr.h"
 
 const char* unusedStrings[] = {
     "The song %s has an invalid songID, assigning temp id %d.\n" 
@@ -110,7 +111,7 @@ void SongMgr::SaveMount() {
 
     if (unk_b4 == 0) {
         uVar1 = Symbol();
-        //unk_b4 = TheCacheMgr.GetCacheID(uVar1);
+        // unk_b4 = TheCacheMgr->GetCacheID(uVar1);
     }
 
     if (unk_b4 == 0) {
@@ -119,7 +120,7 @@ void SongMgr::SaveMount() {
         // Something involving TheCacheMgr
         int iVar2;
         if (iVar2 == 0) {
-            // TheCacheMgr.GetLastResult();
+            TheCacheMgr->GetLastResult();
             int CVar3 = 0;
             if (CVar3 == 1) {
                 SetState((SongMgrState)3);
