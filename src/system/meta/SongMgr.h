@@ -1,74 +1,53 @@
 #ifndef METABAND_SONGMGR_H
 #define METABAND_SONGMGR_H
-
-#include "system/utl/Symbol.h"
-#include "system/utl/Loader.h"
-#include "system/utl/BufStream.h"
-#include "system/obj/Data.h"
-#include "system/os/ContentMgr.h"
+#include "obj/MsgSource.h"
+#include "os/ContentMgr.h"
+#include "utl/Symbol.h"
 #include <vector>
+#include <map>
 
-enum SongMgrState {
+class DataLoader;
+class SongMetadata;
 
-};
-
-void GetSongID(DataArray*, DataArray*);
-void CountSongsInArray(DataArray*);
-
-class SongMgr {
+class SongMgr : public MsgSource, public ContentMgr::Callback {
+public:
+    SongMgr(){}
+    
+    virtual DataNode Handle(DataArray*, bool);
     virtual ~SongMgr();
-    void Init();
-    bool HasSong(int) const;
-    bool HasSong(Symbol, bool) const;
-    void Data(int) const;
-    void ContentStarted();
-    void ContentDiscovered(Symbol);
-    void ContentLoaded(Loader*, ContentLocT, Symbol);
-    bool AllowContentToBeAdded(DataArray*, ContentLocT);
-    void ContentDone();
-    void ContentMounted(const char*, const char*);
+    virtual void Init();
+    virtual void Terminate();
+    virtual int Data(int) const; // fix return type
+    virtual int SongAudioData(int) const = 0;
+    virtual void ContentStarted();
+    virtual bool ContentDiscovered(Symbol);
+    virtual void ContentLoaded(class Loader*, ContentLocT, Symbol);
+    virtual void ContentDone();
+    virtual void ContentMounted(const char*, const char*);
     virtual void ContentUnmounted(const char*);
-    void ContentName(int) const;
-    void SongAudioData(Symbol) const;
-    const char* ContentName(Symbol, bool) const;
-    void GetContentNames(Symbol, std::vector<Symbol>);
-    bool SongCacheNeedsWrite() const;
-    bool IsSongCacheWriteDone() const;
-    bool IsSongMounted(Symbol) const;
-    void ClearSongCacheNeedsWrite();
-    void StartSongCacheWrite();
-    void SaveCachedSongInfo(BufStream&);
-    void LoadCachedSongInfo(BufStream&);
-    void GetCachedSongInfoSize() const;
-    void GetCachedSongInfoName() const;
-    void ClearCachedContent();
-    void ClearFromCache(Symbol);
-    void SetState(enum SongMgrState);
-    //void CacheSongData(DataArray*, DataLoader*, ContentLocT, Symbol)
-    void SaveMount();
-    void SaveWrite();
-    void SaveUnmount();
-    void OnCacheMountResult(int);
-    void OnCacheWriteResult(int);
-    void OnCacheUnmountResult(int);
-    void GetSongsInContent(Symbol, std::vector<int>&) const;
-    void NumSongsInContent(int) const;
-    void DumpSongMgrContents(bool);
-    void Handle(DataArray*, bool);
-    void AllowCacheWrite(bool);
-    void Terminate();
+    virtual void GetContentNames(Symbol, std::vector<Symbol>&) const;
+    virtual bool SongCacheNeedsWrite() const;
+    virtual void ClearSongCacheNeedsWrite();
+    virtual void AllowCacheWrite(bool);
+    virtual void ClearCachedContent();
+    virtual Symbol GetShortNameFromSongID(int, bool) const = 0;
+    virtual int GetSongIDFromShortName(Symbol, bool) const = 0;
+    virtual Symbol SongName(int) const = 0;
+    virtual bool CanAddSong() const = 0;
+    virtual bool AllowContentToBeAdded(DataArray*, ContentLocT);
+    virtual void AddSongData(DataArray*, DataLoader*, ContentLocT) = 0;
+    virtual void AddSongData(DataArray*, std::map<int, SongMetadata*>&, const char*, ContentLocT, std::vector<int>&) = 0;
+    virtual void AddSongIDMapping(int, Symbol) = 0;
+    virtual void ReadCachedMetadataFromStream(BinStream&, int) = 0;
+    virtual void WriteCachedMetadataFromStream(BinStream&) const = 0;
 
-    int mPadding1[19];
-
-    int unk_50;
-
-    int mPadding2[24];
-
-    int unk_b4;                     // 0xb4
-    int unk_b8;                     // 0xb8
-    bool unk_bc;                    // 0xbc
-    bool mClearSongCacheNeedsWrite; // 0xbd
-    bool mAllowCacheWrite;          // 0xbe
+    // void HasSong(int) const;
+    bool HasSong(Symbol, bool) const;
+    
+    // void ContentName(int) const;
+    // void ContentName(Symbol, bool) const;
+    // void IsSongCacheWriteDone() const;
+    // void IsSongMounted(Symbol) const;
 };
 
 #endif // METABAND_SONGMGR_H

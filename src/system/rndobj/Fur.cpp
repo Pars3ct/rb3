@@ -8,12 +8,11 @@
 INIT_REVS(RndFur);
 
 RndFur::RndFur() {
-    
+
 }
 
 BEGIN_COPYS(RndFur)
-    // GET_COPY_AND_ASSERT(RndFur, 23)
-    const RndFur* m = dynamic_cast<const RndFur*>(o);
+    CREATE_COPY_AS(RndFur, m)
     MILO_ASSERT(m, 23);
     COPY_SUPERCLASS(Hmx::Object)
 END_COPYS
@@ -48,7 +47,3 @@ END_HANDLERS;
 
 BEGIN_PROPSYNCS(RndFur);
 END_PROPSYNCS;
-
-static void rndfursettype(RndFur* fur){
-    fur->SetType(Symbol());
-}

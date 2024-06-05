@@ -1,6 +1,8 @@
 #include "rndobj/Cam.h"
+#include "obj/ObjMacros.h"
 #include "obj/ObjPtr_p.h"
 #include "obj/Object.h"
+#include "os/Debug.h"
 #include "rndobj/Draw.h"
 #include "rndobj/Trans.h"
 #include "rndobj/Utl.h"
@@ -53,15 +55,17 @@ void RndCam::Load(BinStream& bs) {
 BEGIN_COPYS(RndCam)
     COPY_SUPERCLASS(Hmx::Object)
     COPY_SUPERCLASS(RndTransformable)
-    GET_COPY(RndCam)
-    if(c && ty != kCopyFromMax){
-        COPY_MEMBER(mNearPlane)
-        COPY_MEMBER(mFarPlane)
-        COPY_MEMBER(mYFov)
-        COPY_MEMBER(mScreenRect)
-        COPY_MEMBER(mZRange)
-        COPY_MEMBER(mTargetTex)
-    }
+    CREATE_COPY(RndCam)
+    BEGIN_COPYING_MEMBERS
+        if(ty != kCopyFromMax){
+            COPY_MEMBER(mNearPlane)
+            COPY_MEMBER(mFarPlane)
+            COPY_MEMBER(mYFov)
+            COPY_MEMBER(mScreenRect)
+            COPY_MEMBER(mZRange)
+            COPY_MEMBER(mTargetTex)
+        }
+    END_COPYING_MEMBERS
     UpdateLocal();
 END_COPYS
 
@@ -71,6 +75,19 @@ RndCam::RndCam() : mNearPlane(1.0f), mFarPlane(1000.0f), mYFov(0.6024178f), mUnk
 
 RndCam::~RndCam(){
     if(sCurrent == this) sCurrent = 0;
+}
+
+void RndCam::SetFrustum(float f1, float f2, float f3, float f4) {
+    if (f2 - 0.0001f > f1 * 1000) {
+        static DebugNotifyOncer _dw;
+        const char* s = MakeString("%s: %f/%f plane ratio exceeds 1000", mName, f2, f1);
+        if (::AddToNotifies(s, _dw.mNotifies))
+            TheDebugNotifier << s;
+        if (f2 == mFarPlane) f1 = f2 / 1000;
+        if (f2 != mFarPlane) f2 = f1 * 1000;
+    }
+    mNearPlane = f1; mFarPlane = f2; mYFov = f3; mUnknownFloat = f4;
+    UpdateLocal();
 }
 
 BEGIN_HANDLERS(RndCam)
@@ -95,6 +112,10 @@ DataNode RndCam::OnSetFrustum(const DataArray* da){
     return DataNode(0);
 }
 
+void RndCam::UpdateLocal() {
+    
+}
+
 DataNode RndCam::OnSetZRange(const DataArray* da){
     mZRange.Set(da->Float(2), da->Float(3));
     return DataNode(0);
@@ -111,6 +132,8 @@ DataNode RndCam::OnFarPlane(const DataArray*){
 }
 
 BEGIN_PROPSYNCS(RndCam)
+    //SYNC_SUPERCLASS(RndTransformable)
+    SYNC_PROP_MODIFY(near_plane, mNearPlane, )
     SYNC_PROP(z_range, mZRange)
-    SYNC_PROP_ACTION(screen_rect, mScreenRect, 0x11, UpdateLocal())
+    SYNC_PROP_MODIFY(screen_rect, mScreenRect, UpdateLocal())
 END_PROPSYNCS

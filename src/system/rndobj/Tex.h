@@ -53,13 +53,22 @@ public:
     DataNode OnSetBitmap(const DataArray*);
 
     void SetBitmap(int, int, int, RndTex::Type, bool, const char*);
+    void SetBitmap(const RndBitmap&, const char*, bool);
     void SetBitmap(FileLoader*);
     void SetBitmap(const FilePath&);
     void SaveBitmap(const char*);
+    void SetPowerOf2();
+
     static const char* CheckSize(int, int, int, int, RndTex::Type, bool);
+    static void PlatformBppOrder(const char*, int&, int&, bool);
     inline bool IsRenderTarget() { return mType & Rendered; }
 
+    NEW_OVERLOAD
+    NEW_OBJ(RndTex)
     DELETE_OVERLOAD;
+    static void Init(){
+        REGISTER_OBJ_FACTORY(RndTex)
+    }
 
     RndBitmap mBitmap;
     float mMipMapK; // 0x38
@@ -68,17 +77,17 @@ public:
     int mHeight; // 0x44
     int mBpp; // 0x48
     FilePath mFilepath; // 0x4C
-    FileLoader* mLoader; // 0x58
+    int mNumMips; // 0x58
     bool mIsPowerOf2; // 0x5C
     bool mOptimizeForPS3; // 0x5D
-    int unk60; // this is def a ptr to something judging by the fact it gets released in the dtor
+    FileLoader* mLoader; // 0x60
 
     DECLARE_REVS
 };
 
 bool UseBottomMip();
 void CopyBottomMip(RndBitmap&, const RndBitmap&);
-char* CheckDim(int, RndTex::Type, bool);
+const char* CheckDim(int, RndTex::Type, bool);
 TextStream& operator<<(TextStream&, RndTex::Type);
 
 #endif // RNDOBJ_TEX_H

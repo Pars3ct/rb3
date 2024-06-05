@@ -12,7 +12,9 @@ class BandUser : public virtual User {
     virtual ~BandUser();
 
 public:
-    ControllerType GetControllerType();
+    ControllerType GetControllerType() const;
+    TrackType GetTrackType() const;
+    Symbol GetTrackSym() const;
 
 private:
     Difficulty unk_0x8;

@@ -3,6 +3,8 @@
 #include "utl/Symbols.h"
 #include "obj/PropSync_p.h"
 
+#include "decomp.h"
+
 INIT_REVS(RndMovie);
 
 RndMovie::RndMovie() : mFile(), mStream(0), mLoop(1), mTex(this, 0) {
@@ -43,12 +45,12 @@ void RndMovie::SetFile(const FilePath& fp, bool b){
 }
 
 BEGIN_COPYS(RndMovie)
-    const RndMovie* t = dynamic_cast<const RndMovie*>(o);
+    CREATE_COPY_AS(RndMovie, t);
     MILO_ASSERT(t, 0x52);
     COPY_SUPERCLASS(Hmx::Object)
     COPY_SUPERCLASS(RndAnimatable)
-    mLoop = t->mLoop;
-    mTex = t->mTex;
+    COPY_MEMBER_FROM(t, mLoop)
+    COPY_MEMBER_FROM(t, mTex)
     SetFile(t->mFile, t->mStream);
 END_COPYS
 
@@ -107,7 +109,6 @@ BEGIN_PROPSYNCS(RndMovie)
     SYNC_SUPERCLASS(RndAnimatable)
 END_PROPSYNCS
 
-static void lol(RndMovie* movie){
-    movie->Loop();
-    movie->SetType(Symbol());
-}
+// Force inline generation
+DECOMP_FORCEFUNC(Movie, RndMovie, SetType(Symbol()))
+DECOMP_FORCEFUNC(Movie, RndMovie, Loop())

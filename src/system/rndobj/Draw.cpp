@@ -1,5 +1,6 @@
 #include "rndobj/Draw.h"
 #include "rndobj/Cam.h"
+#include "rndobj/Utl.h"
 #include "utl/Symbols.h"
 #include "obj/PropSync_p.h"
 
@@ -36,9 +37,22 @@ bool RndDrawable::DrawShowingBudget(float f){
     return true;
 }
 
+void RndDrawable::Highlight(){
+    if(sHighlightStyle != kHighlightNone){
+        Sphere s;
+        if(!MakeWorldSphere(s, false) || !(s > RndCam::sCurrent->mWorldFrustum)){
+            bool showing = mShowing;
+            mShowing = true;
+            Hmx::Color col(1.0f, 1.0f, 0.0f);
+            UtilDrawSphere(s.center, s.radius, col);
+            mShowing = showing;
+        }
+    }
+}
+
 BEGIN_COPYS(RndDrawable)
-    GET_COPY(RndDrawable)
-    BEGIN_COPY_CHECKED
+    CREATE_COPY(RndDrawable)
+    BEGIN_COPYING_MEMBERS
         if(ty != kCopyFromMax){
             COPY_MEMBER(mShowing)
             COPY_MEMBER(mOrder)
@@ -49,7 +63,7 @@ BEGIN_COPYS(RndDrawable)
                 COPY_MEMBER(mSphere)
             }
         }
-    END_COPY_CHECKED
+    END_COPYING_MEMBERS
 END_COPYS
 
 SAVE_OBJ(RndDrawable, 0xAE)

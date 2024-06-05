@@ -34,7 +34,7 @@ public:
     virtual float GetDistanceToPlane(const Plane&, Vector3&);
     virtual bool MakeWorldSphere(Sphere&, bool);
     virtual void DrawShowing();
-    virtual int CollideShowing(const Segment&, float&, Plane&);
+    virtual RndDrawable* CollideShowing(const Segment&, float&, Plane&);
     virtual int CollidePlane(const Plane&);
     virtual void CollideList(const Segment&, std::list<Collision>&);
     virtual void ListDrawChildren(std::list<RndDrawable*>&);
@@ -58,8 +58,12 @@ public:
     ObjPtr<RndEnviron, ObjectDir> mEnv;
     Symbol mTestEvent;
 
+    NEW_OVERLOAD;
+    DELETE_OVERLOAD;
     NEW_OBJ(RndDir)
-    DELETE_OVERLOAD
+    static void Init(){
+        REGISTER_OBJ_FACTORY(RndDir)
+    }
 };
 
 #endif

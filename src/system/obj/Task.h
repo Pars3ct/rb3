@@ -4,6 +4,14 @@
 #include "obj/ObjPtr_p.h"
 #include <list>
 
+enum TaskUnits {
+    kTaskSeconds,
+    kTaskBeats,
+    kTaskUISeconds,
+    kTaskTutorialSeconds,
+    kTaskNumUnits
+};
+
 class Task : public Hmx::Object {
 public:
     Task(){}
@@ -44,5 +52,25 @@ public:
     DataArray* mScript;
     bool mOnce;
 };
+
+class TaskMgr : public Hmx::Object {
+public:
+
+    enum TimeReference {
+        a, b, c
+    };
+
+    TaskMgr(){}
+    virtual ~TaskMgr();
+    virtual DataNode Handle(DataArray*, bool);
+
+    float UISeconds() const;
+    float Beat() const;
+    float Seconds(TimeReference) const;
+    float TutorialSeconds() const;
+    void Start(Task*, TaskUnits, float);
+};
+
+extern TaskMgr TheTaskMgr;
 
 #endif
