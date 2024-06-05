@@ -114,7 +114,7 @@ namespace Hmx {
             return obj;
         }
 
-        std::vector<ObjRef*>& Refs(){ return mRefs; }
+        const std::vector<ObjRef*>& Refs() const { return mRefs; }
 
         const DataArray* TypeDef() const { return mTypeDef; }
         Symbol Type() const {
@@ -182,5 +182,8 @@ inline int packRevs(unsigned short alt, unsigned short rev){
 
 #define NEW_OBJ(objType) \
     static Hmx::Object* NewObject() { return new objType; }
+
+#define REGISTER_OBJ_FACTORY(objType) \
+    Hmx::Object::RegisterFactory(objType::StaticClassName(), objType::NewObject);
 
 #endif

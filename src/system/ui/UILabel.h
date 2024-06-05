@@ -35,14 +35,14 @@ public:
     virtual float GetDistanceToPlane(const Plane&, Vector3&);
     virtual void Draw();
     virtual void DrawShowing();
-    virtual int CollideShowing(const Segment&, float&, Plane&);
+    virtual RndDrawable* CollideShowing(const Segment&, float&, Plane&);
     virtual int CollidePlane(const Plane&);
     virtual void Highlight();
     virtual ~UILabel();
     virtual void PreLoad(BinStream&);
     virtual void PostLoad(BinStream&);
     virtual void Poll();
-    virtual int CanHaveFocus();
+    virtual bool CanHaveFocus();
     virtual void CopyMembers(const UIComponent*, Hmx::Object::CopyType);
     virtual void Update();
     virtual void SetCreditsText(DataArray*, class UIListSlot*) {MILO_ASSERT(false, 78);}

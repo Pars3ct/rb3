@@ -2,6 +2,8 @@
 #include "utl/Symbols.h"
 #include "obj/PropSync_p.h"
 
+#include "decomp.h"
+
 unsigned short CharEyeDartRuleset::gRev = 0;
 unsigned short CharEyeDartRuleset::gAltRev = 0;
 
@@ -10,7 +12,7 @@ CharEyeDartRuleset::CharEyeDartRuleset(){
 }
 
 CharEyeDartRuleset::~CharEyeDartRuleset(){
-    
+
 }
 
 void CharEyeDartRuleset::EyeDartRulesetData::ClearToDefaults(){
@@ -33,14 +35,14 @@ void CharEyeDartRuleset::Load(BinStream& bs){
     LOAD_REVS(bs);
     ASSERT_REVS(1, 0);
     Hmx::Object::Load(bs);
-    bs >> mData.mMinRadius >> mData.mMaxRadius >> mData.mOnTargetAngleThresh >> mData.mMinDartsPerSequence >> mData.mMaxDartsPerSequence >> 
+    bs >> mData.mMinRadius >> mData.mMaxRadius >> mData.mOnTargetAngleThresh >> mData.mMinDartsPerSequence >> mData.mMaxDartsPerSequence >>
         mData.mMinSecsBetweenDarts >> mData.mMaxSecsBetweenDarts >> mData.mMinSecsBetweenSequences >> mData.mMaxSecsBetweenSequences >> mData.mScaleWithDistance >> mData.mReferenceDistance;
 }
 
 BEGIN_COPYS(CharEyeDartRuleset)
     COPY_SUPERCLASS(Hmx::Object)
-    GET_COPY(CharEyeDartRuleset)
-    BEGIN_COPY_CHECKED
+    CREATE_COPY(CharEyeDartRuleset)
+    BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mData.mMinRadius)
         // COPY_MEMBER(mData.mMaxRadius)
         mData.mMaxRadius = c->mData.mMinRadius;
@@ -53,7 +55,7 @@ BEGIN_COPYS(CharEyeDartRuleset)
         COPY_MEMBER(mData.mMaxSecsBetweenSequences)
         COPY_MEMBER(mData.mScaleWithDistance)
         COPY_MEMBER(mData.mReferenceDistance)
-    END_COPY_CHECKED
+    END_COPYING_MEMBERS
 END_COPYS
 
 BEGIN_PROPSYNCS(CharEyeDartRuleset)
@@ -70,14 +72,14 @@ BEGIN_PROPSYNCS(CharEyeDartRuleset)
     SYNC_PROP(reference_distance, mData.mReferenceDistance)
 END_PROPSYNCS
 
-static const char* const unused_chareyedartrulesetstrs[] = {
-    "min_radius", "max_radius", 
-    "min_darts_per_sequence", "max_darts_per_sequence", 
-    "min_time_between_darts", "max_time_between_darts", 
-    "min_time_between_sequences", "max_time_between_sequences", 
-    "scale_with_distance", 
+DECOMP_FORCEACTIVE(CharEyeDartRuleset,
+    "min_radius", "max_radius",
+    "min_darts_per_sequence", "max_darts_per_sequence",
+    "min_time_between_darts", "max_time_between_darts",
+    "min_time_between_sequences", "max_time_between_sequences",
+    "scale_with_distance",
     "reference_distance"
-};
+)
 
 BEGIN_HANDLERS(CharEyeDartRuleset)
     HANDLE_SUPERCLASS(Hmx::Object)

@@ -1,6 +1,8 @@
 #include "ui/Screenshot.h"
-#include "rndobj/Tex.h"
+#include "math/Color.h"
 #include "rndobj/Mat.h"
+#include "rndobj/Rnd.h"
+#include "rndobj/Tex.h"
 #include "obj/PropSync_p.h"
 #include "utl/Symbols.h"
 #include "utl/Loader.h"
@@ -11,8 +13,8 @@ unsigned short Screenshot::gAltRev = 0;
 BEGIN_COPYS(Screenshot)
     COPY_SUPERCLASS(Hmx::Object)
     COPY_SUPERCLASS(RndDrawable)
-    GET_COPY(Screenshot)
-    if(c && ty != kCopyFromMax) COPY_MEMBER(mTexPath)
+    CREATE_COPY(Screenshot, c)
+    if(c && ty != kCopyFromMax) COPY_MEM(c, mTexPath)
     Sync();
 END_COPYS
 
@@ -43,6 +45,12 @@ void Screenshot::Sync(){
     }
 }
 
+void Screenshot::DrawShowing() {
+    if (!TheRnd->unk_0xE4 && TheLoadMgr.EditMode() && mMat) {
+        TheRnd->DrawRect(Hmx::Rect(0, 0, TheRnd->mWidth, TheRnd->mHeight), Hmx::Color(0, 0, 0), mMat, 0, 0);
+    }
+}
+
 Screenshot::~Screenshot(){
     delete mTex;
     delete mMat;
@@ -59,15 +67,6 @@ BEGIN_HANDLERS(Screenshot)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(Screenshot)
-    // SYNC_PROP_ACTION(tex_path, mTexPath, kPropSize|kPropGet, Sync())
-    // TODO: fix the SYNC_PROP_ACTION macro to incorporate this order of control flow, while not breaking the other SyncProps
-    if(sym == tex_path){ 
-        bool synced = PropSync(mTexPath, _val, _prop, _i + 1, _op);
-        if(synced) { 
-            if(!(_op & (kPropSize|kPropGet))){ Sync(); } 
-            return true; 
-        } 
-        else return false; 
-    }
+    SYNC_PROP_MODIFY_ALT(tex_path, mTexPath, Sync())
     SYNC_SUPERCLASS(RndDrawable)
 END_PROPSYNCS

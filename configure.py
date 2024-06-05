@@ -25,15 +25,11 @@ from tools.project import (
     is_windows,
 )
 
-from tools.cflags_common import cflags_includes
-
-# Game versions
-# Be sure to update macros.h if this list changes!
-DEFAULT_VERSION = 1
-VERSIONS = [
-    "SZBE69",    # 0
-    "SZBE69_B8", # 1
-]
+from tools.defines_common import (
+    cflags_includes,
+    DEFAULT_VERSION,
+    VERSIONS
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -119,7 +115,6 @@ args = parser.parse_args()
 
 config = ProjectConfig()
 config.version = str(args.version)
-version_num = VERSIONS.index(config.version)
 
 # Apply arguments
 config.build_dir = args.build_dir
@@ -180,7 +175,7 @@ def set_flags_inherited(name: str):
 
 # Additional base flags
 base_flags = get_flags("base")
-base_flags.append(f"-d GAME_VERSION={version_num}")
+base_flags.append(f"-d VERSION_{config.version}")
 if config.debug:
     base_flags.append("-sym dwarf-2,full")
 

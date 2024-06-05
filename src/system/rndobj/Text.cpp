@@ -50,10 +50,10 @@ BEGIN_COPYS(RndText)
     COPY_SUPERCLASS(RndDrawable)
     COPY_SUPERCLASS(RndTransformable)
     if (ty == kCopyFromMax) return;
-    GET_COPY(RndText)
-    BEGIN_COPY_CHECKED
+    CREATE_COPY(RndText)
+    BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mFont)
-    END_COPY_CHECKED
+    END_COPYING_MEMBERS
     UpdateText(true);
 END_COPYS
 
@@ -61,7 +61,25 @@ void RndText::Print() {
     TheDebug << "   font: " << mFont << "\n";
 }
 
-RndText::RndText() : mFont(this, NULL), mWrapWidth(0), unk_c8(1), unk_e0(this, NULL) {}
+RndText::RndText() : mFont(this, NULL), mWrapWidth(0.0f), mLeading(1.0f), mAlign(kTopLeft), mCapsMode(kCapsModeNone) {
+    unkd8 = mFont;
+    mSize = 1.0f;
+    mItalicStrength = 0.0f;
+    unke4 = -1;
+    unke8 = true;
+    unke9 = false;
+    unkec = 0.0f;
+    unkf0 = 0;
+    unkf4 = 1.0f;
+    unkf8 = 0.0f;
+    unkfc = -1;
+    unk100 = true;
+    unk101 = false;
+    unk104 = 0.0f;
+    unk128 = 0;
+    unk12c = 0.0f;
+    unk130 = 0.0f;
+}
 
 RndText::~RndText() {
     MILO_ASSERT(mDeferUpdate == 0, 723);
@@ -94,6 +112,11 @@ BEGIN_HANDLERS(RndText)
     HANDLE(set_size, OnSetSize)
     HANDLE(set_wrap_width, OnSetWrapWidth)
     HANDLE(set_color, OnSetColor)
+    if (sym == get_text_size) {
+        int x = strlen(unk_cc.c_str()), y = s16(mAlign) >> 16;
+        return DataNode(y < x ? x : y);
+    }
+    HANDLE_EXPR(get_string_width, GetStringWidthUTF8(_msg->Str(2), NULL, false, NULL))
 
     HANDLE_SUPERCLASS(RndDrawable)
     HANDLE_SUPERCLASS(RndTransformable)

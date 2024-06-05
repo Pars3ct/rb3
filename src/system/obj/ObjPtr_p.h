@@ -9,7 +9,7 @@
 template <class T1, class T2> class ObjPtr : public ObjRef {
 public:
 
-    ObjPtr(Hmx::Object* obj, T1* cls) : mOwner(obj), mPtr(cls) {
+    ObjPtr(Hmx::Object* obj, T1* cls = 0) : mOwner(obj), mPtr(cls) {
         if(mPtr != 0) mPtr->AddRef(this);
     }
 
@@ -175,7 +175,7 @@ public:
             while(it != 0){
                 if(it->obj == from){
                     if(mMode == kObjListNoNull && !to){
-                        it = remove(it).mNode;
+                        it = erase(it).mNode;
                         continue;
                     }
                     else {
@@ -191,7 +191,7 @@ public:
 
     virtual bool IsDirPtr(){ return 0; }
 
-    void clear(){ while(mSize != 0) pop_back(); }
+    void clear(){ while(!empty()) pop_back(); }
 
     // https://decomp.me/scratch/ESkuY
     // push_back__36ObjPtrList<11RndDrawable,9ObjectDir>FP11RndDrawable
@@ -204,10 +204,10 @@ public:
     // PLEASE FIX
     void pop_back(){
         MILO_ASSERT(mNodes, 0x16D);
-        remove(mNodes->prev);
+        erase(mNodes->prev);
     }
 
-    iterator remove(iterator it){
+    iterator erase(iterator it){
         Node* unlinked = unlink(it.mNode);
         delete it.mNode;
         return unlinked;

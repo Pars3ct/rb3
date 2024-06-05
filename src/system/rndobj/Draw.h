@@ -7,6 +7,14 @@
 #include "math/Geo.h"
 #include <list>
 
+enum HighlightStyle {
+    kHighlightWireframe,
+    kHighlightSphere,
+    kHighlightNone,
+    kHighlightWireframeWithNormals,
+    kNumHighlightStyles
+};
+
 class RndDrawable : public virtual RndHighlightable {
 public:
     struct Collision {
@@ -32,7 +40,7 @@ public:
     virtual void DrawShowing(){}
     virtual bool DrawShowingBudget(float);
     virtual void ListDrawChildren(std::list<RndDrawable*>&){}
-    virtual int CollideShowing(const Segment&, float&, Plane&){ return 0; }
+    virtual RndDrawable* CollideShowing(const Segment&, float&, Plane&){ return 0; }
     virtual int CollidePlane(const Plane&);
     virtual void CollideList(const Segment&, std::list<Collision>&);
     virtual void DrawPreClear(){}
@@ -42,6 +50,16 @@ public:
 
     bool DrawBudget(float);
     static void DumpLoad(BinStream&);
+    static HighlightStyle sHighlightStyle;
+    static float sNormalDisplayLength;
+    static bool sForceSubpartSelection;
+
+    static HighlightStyle GetHighlightStyle(){ return sHighlightStyle; }
+    static void SetHighlightStyle(HighlightStyle hs){ sHighlightStyle = hs; }
+    static float GetNormalDisplayLength(){ return sNormalDisplayLength; }
+    static void SetNormalDisplayLength(float f){ sNormalDisplayLength = f; }
+    static bool GetForceSubpartSelection(){ return sForceSubpartSelection; }
+    static void SetForceSubpartSelection(bool b){ sForceSubpartSelection = b; }
 
     DataNode OnCopySphere(const DataArray*);
     DataNode OnGetSphere(const DataArray*);
@@ -51,7 +69,7 @@ public:
     
     bool mShowing : 1;
     bool unk8p1 : 1; // used in RndGroup
-    bool unk8p2 : 1;
+    bool mSynthEmitterEnabled : 1; // used in SynthEmitter
     bool mTestDone : 1; // used in RndFlare
     bool mLastDone : 1; // used in RndFlare
     bool unk8p5 : 1;

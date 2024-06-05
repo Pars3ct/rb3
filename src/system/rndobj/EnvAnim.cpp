@@ -1,10 +1,13 @@
 #include "rndobj/EnvAnim.h"
 
+#include "decomp.h"
+
 int ENVANIM_REV = 4;
 
-static const char* unused(int o){
-    MILO_ASSERT(o, 0x69);
-}
+DECOMP_FORCEACTIVE(EnvAnim,
+    __FILE__,
+    "o"
+)
 
 RndEnvAnim::RndEnvAnim() : mEnviron(this, 0), mKeysOwner(this, this) {
 
@@ -33,13 +36,13 @@ BEGIN_LOADS(RndEnvAnim)
 END_LOADS
 
 BEGIN_COPYS(RndEnvAnim)
-    const RndEnvAnim* l = dynamic_cast<const RndEnvAnim*>(o);
+    CREATE_COPY_AS(RndEnvAnim, l);
     MILO_ASSERT(l, 0x6B);
     COPY_SUPERCLASS(Hmx::Object)
     COPY_SUPERCLASS(RndAnimatable)
-    mEnviron = l->mEnviron;
+    COPY_MEMBER_FROM(l, mEnviron)
     if(ty == kCopyShallow){
-        mKeysOwner = l->mKeysOwner;
+        COPY_MEMBER_FROM(l, mKeysOwner)
     }
     else {
         mKeysOwner = this;

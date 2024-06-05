@@ -28,7 +28,7 @@ public:
     virtual bool MakeWorldSphere(Sphere&, bool);
     virtual void DrawShowing();
     virtual void ListDrawChildren(std::list<RndDrawable*>&);
-    virtual int CollideShowing(const Segment&, float&, Plane&);
+    virtual RndDrawable* CollideShowing(const Segment&, float&, Plane&);
     virtual void CollideList(const Segment&, std::list<Collision>&);
     virtual int CollidePlane(const Plane&);
     virtual bool DrawShowingBudget(float);
@@ -40,6 +40,13 @@ public:
     void Merge(const RndGroup*);
     void RemoveObject(Hmx::Object*);
     void AddObject(Hmx::Object*, Hmx::Object*);
+
+    NEW_OVERLOAD;
+    DELETE_OVERLOAD;
+    NEW_OBJ(RndGroup)
+    static void Init(){
+        REGISTER_OBJ_FACTORY(RndGroup)
+    }
 
     ObjPtrList<Hmx::Object, ObjectDir> mObjects;
     ObjPtr<RndEnviron, ObjectDir> mEnv;
